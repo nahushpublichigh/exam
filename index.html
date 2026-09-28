@@ -1006,6 +1006,17 @@
         .dash-chart-bar-val { font-size: 0.7rem; font-weight: bold; color: var(--primary); margin-bottom: 3px; }
         .dash-chart-bar-lbl { font-size: 0.7rem; margin-top: 6px; font-weight: 600; color: #334155; text-align: center; }
 
+
+        /* --- HIDE DATA BASE (Control Panel) --- */
+        .hd-active > *:not(.hd-notice){display:none !important;}
+        .hd-notice{max-width:760px;margin:40px auto;padding:34px 28px;text-align:center;background:#fff7ed;border:2px dashed #f59e0b;border-radius:14px;color:#7c2d12;}
+        .hd-notice i{font-size:2.6rem;color:#f59e0b;margin-bottom:10px;display:block;}
+        .hd-notice h3{margin:0 0 8px 0;font-size:1.25rem;color:#9a3412;}
+        .hd-notice .hd-notice-text{font-size:1rem;font-weight:700;white-space:pre-wrap;line-height:1.6;}
+        .hd-opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;background:#f8fafc;padding:14px;border-radius:6px;border:1px solid #cbd5e1;max-height:340px;overflow:auto;}
+        .hd-opt-grid label{display:flex;gap:6px;align-items:flex-start;font-size:.85rem;cursor:pointer;}
+        .hd-badge{display:inline-block;background:#dc2626;color:#fff;border-radius:10px;font-size:.62rem;padding:1px 7px;margin-left:4px;font-weight:800;}
+
         /* --- CONTROL PANEL: HISTORY / DELETE DATA --- */
         .danger-zone-box { background: #fef2f2; border: 1px dashed #dc2626; border-radius: 8px; padding: 15px; }
         .history-filter-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: end; }
@@ -3488,6 +3499,46 @@
                             <div id="teacher-cards-print-area"></div>
                         </div>
 
+                        <!-- HIDE DATA BASE -->
+                        <div style="margin-bottom:25px; border-bottom:2px dashed #cbd5e1; padding-bottom:20px;">
+                            <h3 style="color:var(--primary); margin-bottom:10px;"><i class="fa-solid fa-eye-slash"></i> Hide Data Base</h3>
+                            <button type="button" class="btn btn-primary" id="hd-open-btn" onclick="hdOpenPrompt()"><i class="fa-solid fa-lock"></i> Hide Data Base खोलें</button>
+
+                            <div id="hd-pass-box" style="display:none; margin-top:12px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:15px; max-width:420px;">
+                                <label style="font-weight:700; font-size:.85rem;">पासवर्ड डालें (Enter Password)</label>
+                                <div style="display:flex; gap:8px; margin-top:6px;">
+                                    <input type="password" id="hd-pass-input" placeholder="Password" style="flex:1; height:38px; padding:0 10px; border:1px solid #cbd5e1; border-radius:6px;" onkeydown="if(event.key==='Enter'){hdCheckPass();}">
+                                    <button type="button" class="btn btn-success" onclick="hdCheckPass()">Enter</button>
+                                </div>
+                                <div id="hd-pass-err" style="color:#dc2626; font-size:.8rem; margin-top:6px; display:none;">गलत पासवर्ड!</div>
+                            </div>
+
+                            <div id="hd-panel" style="display:none; margin-top:15px;">
+                                <h4 style="margin:0 0 8px 0; color:#334155;">जिस option का डेटा hide करना है उसे tick करें:</h4>
+                                <div id="hd-options-grid" class="hd-opt-grid"></div>
+
+                                <div style="margin-top:12px;">
+                                    <label style="font-weight:700; font-size:.85rem;">Note — डेटा क्यों hide किया गया (यही option खोलने पर दिखेगा):</label>
+                                    <textarea id="hd-note" rows="3" placeholder="जैसे: अभी डेटा अपडेट हो रहा है, कृपया बाद में देखें।" style="width:100%; margin-top:6px; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit;"></textarea>
+                                </div>
+                                <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+                                    <button type="button" class="btn btn-danger" onclick="hdApplyHide()"><i class="fa-solid fa-eye-slash"></i> Hide</button>
+                                    <button type="button" class="btn btn-warning" onclick="hdLock()"><i class="fa-solid fa-lock"></i> बंद करें (Lock)</button>
+                                </div>
+
+                                <h4 style="margin:22px 0 8px 0; color:var(--primary);">अभी hide किए हुए (Hidden Data List):</h4>
+                                <div class="table-responsive">
+                                    <table>
+                                        <thead><tr><th>#</th><th>Option</th><th>Note</th><th>Hide Date</th><th>Action</th></tr></thead>
+                                        <tbody id="hd-hidden-body"></tbody>
+                                    </table>
+                                </div>
+                                <div style="margin-top:10px;">
+                                    <button type="button" class="btn btn-success" id="hd-remove-all-btn" onclick="hdRemoveAll()"><i class="fa-solid fa-eye"></i> सभी से Hide हटाएं</button>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>1. स्कूल लोगो अपलोड करें (Upload Logo)</label>
@@ -4543,6 +4594,125 @@
             if(!isOpen) target.classList.add('open');
         }
 
+
+        /* ============================================================
+           HIDE DATA BASE - Control Panel
+           ============================================================ */
+        const HD_PASSWORD = '4797';
+        const HD_KEY = 'NPHS_HIDE_DB_V1';
+        function hdGet(){ try{ return JSON.parse(localStorage.getItem(HD_KEY) || '{}') || {}; }catch(e){ return {}; } }
+        function hdSet(o){ localStorage.setItem(HD_KEY, JSON.stringify(o)); }
+        function hdEsc(t){ return String(t==null?'':t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+        /* Sidebar के सभी options (control panel को छोड़कर) */
+        function hdOptions(){
+            const list = [], seen = {};
+            document.querySelectorAll('aside .menu-item[onclick*="switchTab("]').forEach(el => {
+                const m = (el.getAttribute('onclick') || '').match(/switchTab\('([^']+)'\)/);
+                if(!m) return;
+                const id = m[1];
+                if(id === 'control-panel' || seen[id] || !document.getElementById('tab-' + id)) return;
+                seen[id] = true;
+                let label = (el.textContent || '').replace(/\s+/g, ' ').trim();
+                const sub = el.closest('.submenu');
+                if(sub){
+                    const parent = sub.previousElementSibling;
+                    if(parent){
+                        const pl = (parent.textContent || '').replace(/\s+/g, ' ').trim();
+                        if(pl) label = pl + ' › ' + label;
+                    }
+                }
+                list.push({id, label});
+            });
+            return list;
+        }
+        function hdLabel(id){ const o = hdOptions().find(x => x.id === id); return o ? o.label : id; }
+
+        function hdOpenPrompt(){
+            document.getElementById('hd-pass-box').style.display = 'block';
+            document.getElementById('hd-pass-err').style.display = 'none';
+            const inp = document.getElementById('hd-pass-input'); inp.value = ''; inp.focus();
+        }
+        function hdCheckPass(){
+            const inp = document.getElementById('hd-pass-input');
+            if(inp.value === HD_PASSWORD){
+                inp.value = '';
+                document.getElementById('hd-pass-box').style.display = 'none';
+                document.getElementById('hd-open-btn').style.display = 'none';
+                document.getElementById('hd-panel').style.display = 'block';
+                hdRenderPanel();
+            } else {
+                document.getElementById('hd-pass-err').style.display = 'block';
+                inp.select();
+            }
+        }
+        function hdLock(){
+            const p = document.getElementById('hd-panel'); if(!p) return;
+            p.style.display = 'none';
+            document.getElementById('hd-pass-box').style.display = 'none';
+            document.getElementById('hd-open-btn').style.display = '';
+            const inp = document.getElementById('hd-pass-input'); if(inp) inp.value = '';
+        }
+        function hdRenderPanel(){
+            const hidden = hdGet();
+            document.getElementById('hd-options-grid').innerHTML = hdOptions().map(o =>
+                `<label><input type="checkbox" class="hd-chk" value="${hdEsc(o.id)}"> <span>${hdEsc(o.label)}${hidden[o.id] ? '<span class="hd-badge">HIDDEN</span>' : ''}</span></label>`
+            ).join('');
+            const ids = Object.keys(hidden);
+            const body = document.getElementById('hd-hidden-body');
+            if(!ids.length){
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;">अभी कोई डेटा hide नहीं है।</td></tr>';
+            } else {
+                body.innerHTML = ids.map((id, i) =>
+                    `<tr><td>${i+1}</td><td>${hdEsc(hdLabel(id))}</td><td style="white-space:pre-wrap;">${hdEsc(hidden[id].note || '-')}</td><td>${hdEsc(hidden[id].time || '')}</td><td><button type="button" class="btn btn-success" style="padding:5px 10px;font-size:.75rem;" onclick="hdRemoveOne('${hdEsc(id)}')"><i class="fa-solid fa-eye"></i> Hide हटाएं</button></td></tr>`
+                ).join('');
+            }
+            document.getElementById('hd-remove-all-btn').style.display = ids.length ? '' : 'none';
+        }
+        function hdApplyHide(){
+            const ticked = Array.from(document.querySelectorAll('#hd-options-grid .hd-chk:checked')).map(c => c.value);
+            if(!ticked.length){ alert('कृपया कम से कम एक option tick करें।'); return; }
+            const note = document.getElementById('hd-note').value.trim();
+            const data = hdGet();
+            const time = new Date().toLocaleString('hi-IN');
+            ticked.forEach(id => { data[id] = {note, time}; });
+            hdSet(data);
+            document.getElementById('hd-note').value = '';
+            hdRenderPanel();
+            ticked.forEach(hdRefreshTab);
+            alert(ticked.length + ' option का डेटा hide हो गया।');
+        }
+        function hdRemoveOne(id){
+            if(!confirm('क्या आप "' + hdLabel(id) + '" से Hide हटाना चाहते हैं?\nडेटा फिर से दिखने लगेगा।')) return;
+            const data = hdGet(); delete data[id]; hdSet(data);
+            hdRenderPanel(); hdRefreshTab(id);
+        }
+        function hdRemoveAll(){
+            const data = hdGet(); const ids = Object.keys(data);
+            if(!ids.length) return;
+            if(!confirm('क्या आप सभी ' + ids.length + ' option से Hide हटाना चाहते हैं?\nसारा डेटा फिर से दिखने लगेगा।')) return;
+            hdSet({});
+            hdRenderPanel(); ids.forEach(hdRefreshTab);
+        }
+        function hdRefreshTab(id){ applyHideDataForTab(id); }
+
+        /* किसी tab पर hide लगाना / हटाना - सिर्फ अंदर का data छिपता है, sidebar का option वैसा ही रहता है */
+        function applyHideDataForTab(tabId){
+            const sec = document.getElementById('tab-' + tabId);
+            if(!sec) return;
+            const rec = hdGet()[tabId];
+            let box = sec.querySelector(':scope > .hd-notice');
+            if(rec){
+                if(!box){ box = document.createElement('div'); box.className = 'hd-notice'; sec.insertBefore(box, sec.firstChild); }
+                box.innerHTML = '<i class="fa-solid fa-eye-slash"></i><h3>यह डेटा अभी छिपा हुआ है (Data Hidden)</h3>' +
+                    '<div class="hd-notice-text">' + hdEsc(rec.note || 'एडमिन द्वारा यह डेटा hide किया गया है।') + '</div>';
+                sec.classList.add('hd-active');
+            } else {
+                if(box) box.remove();
+                sec.classList.remove('hd-active');
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => { el.classList.add('hidden'); el.classList.remove('tab-cinematic-in'); });
             const activeTab = document.getElementById('tab-' + tabId);
@@ -4576,7 +4746,8 @@
             if(tabId === 'firebase-storage') refreshFirebaseStorageStats();
             if(tabId === 'student-photo') loadStudentPhotoTable();
             if(tabId === 'goshwara-report') generateGoshwaraReport();
-            if(tabId === 'control-panel') { renderCorrectionHistoryTable(); renderDuplicateDataTable(); renderActivityHistory(); }
+            if(tabId === 'control-panel') { renderCorrectionHistoryTable(); renderDuplicateDataTable(); renderActivityHistory(); hdLock(); }
+            applyHideDataForTab(tabId);
             if(tabId === 'attendance-holiday') renderHolidayList();
             if(tabId === 'tc-panel-new') { document.getElementById('tcn-fields-section').classList.add('hidden'); document.getElementById('tcn-preview-area').innerHTML = ''; }
         }
@@ -10713,7 +10884,7 @@ function certEscape(s){return String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','
 function certInit(){
   const paper=document.getElementById('cert-paper');
   if(paper && !paper.style.backgroundImage) paper.style.backgroundImage = "url('"+CERT_TEMPLATE_IMG+"')";
-  const d=document.getElementById('cert-input-date'); if(d && !d.value) d.value = certTodayISO();
+  
   const t=document.getElementById('cert-input-type'); if(t && !t.value) t.value = 'OF ACHIEVEMENT';
   certUpdatePreview();
   certRenderList();
@@ -10759,7 +10930,7 @@ function certCapture(){
     cls: (document.getElementById('cert-input-class')?.value||'').trim(),
     roll: (document.getElementById('cert-input-roll')?.value||'').trim(),
     type: (document.getElementById('cert-input-type')?.value||'OF ACHIEVEMENT').trim() || 'OF ACHIEVEMENT',
-    date: document.getElementById('cert-input-date')?.value || certTodayISO(),
+    date: document.getElementById('cert-input-date')?.value || '',
     place: (document.getElementById('cert-input-place')?.value||'').trim(),
     updatedAt: new Date().toLocaleString('hi-IN')
   };
@@ -10771,7 +10942,7 @@ function certApplyRecord(rec){
   document.getElementById('cert-input-class').value = rec.cls||'';
   document.getElementById('cert-input-roll').value = rec.roll||'';
   document.getElementById('cert-input-type').value = rec.type||'OF ACHIEVEMENT';
-  document.getElementById('cert-input-date').value = rec.date||certTodayISO();
+  document.getElementById('cert-input-date').value = rec.date||'';
   document.getElementById('cert-input-place').value = rec.place||'';
   const tag=document.getElementById('cert-current');
   if(tag){ tag.textContent = rec.name ? ('खुला: '+rec.name) : 'नया सर्टिफिकेट'; }
@@ -10780,7 +10951,7 @@ function certApplyRecord(rec){
 
 function certNewCertificate(){
   certCurrentId=null;
-  certApplyRecord({id:null,name:'',cls:'',roll:'',type:'OF ACHIEVEMENT',date:certTodayISO(),place:''});
+  certApplyRecord({id:null,name:'',cls:'',roll:'',type:'OF ACHIEVEMENT',date:'',place:''});
 }
 
 function certSaveCertificate(){
