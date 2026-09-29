@@ -4007,6 +4007,7 @@
         let activityLogDB = JSON.parse(cloudStore.getItem('NPHS_ACTIVITY_LOG_DB')) || [];
         let attendanceDB = JSON.parse(cloudStore.getItem('NPHS_ATTENDANCE_DB')) || {};
         let holidayDB = JSON.parse(cloudStore.getItem('NPHS_HOLIDAY_DB')) || [];
+        let hideDataDB = JSON.parse(cloudStore.getItem('NPHS_HIDE_DB_V1')) || {};
         let resultHoldDB = JSON.parse(cloudStore.getItem('NPHS_RESULT_HOLD_DB')) || {};
         /* रोल नंबर जनरेटर: हर सत्र (YEAR) + कक्षा (CLASS) के लिए शुरुआती (base) रोल नंबर।
            संरचना: { "<YEAR>": { "<CLASS>": "2026001" } }
@@ -4219,6 +4220,7 @@
             activityLogDB = j('NPHS_ACTIVITY_LOG_DB', activityLogDB);
             attendanceDB = j('NPHS_ATTENDANCE_DB', attendanceDB);
             holidayDB = j('NPHS_HOLIDAY_DB', holidayDB);
+            hideDataDB = j('NPHS_HIDE_DB_V1', hideDataDB);
             resultHoldDB = j('NPHS_RESULT_HOLD_DB', resultHoldDB);
             rollConfigDB = j('NPHS_ROLL_CONFIG_DB', rollConfigDB);
             marksheetConfigDB = j('NPHS_MARKSHEET_CFG', marksheetConfigDB);
@@ -4243,6 +4245,7 @@
                     updateHeaderSaveTime();
                     setCloudSyncStatus('success');
                     renderDashboard();
+                    Object.keys(hideDataDB).forEach(applyHideDataForTab);
                     return true;
                 } catch(err) {
                     console.error('Firebase hydrate error', err);
@@ -4597,11 +4600,19 @@
 
         /* ============================================================
            HIDE DATA BASE - Control Panel
+           Firebase-backed (same cloudStore as the rest of the portal), so
+           a hide set from any device/login stays hidden everywhere until
+           it is removed by hand — it never expires or resets on its own.
            ============================================================ */
         const HD_PASSWORD = '4797';
         const HD_KEY = 'NPHS_HIDE_DB_V1';
-        function hdGet(){ try{ return JSON.parse(localStorage.getItem(HD_KEY) || '{}') || {}; }catch(e){ return {}; } }
-        function hdSet(o){ localStorage.setItem(HD_KEY, JSON.stringify(o)); }
+        function hdGet(){ return hideDataDB || {}; }
+        async function hdSet(o){
+            hideDataDB = o;
+            cloudStore.setItem(HD_KEY, JSON.stringify(o));
+            try{ if(cloudHydratePromise) await cloudHydratePromise; if(cloudReady) await flushCloudStore(); }
+            catch(e){ console.error('Hide data save error', e); }
+        }
         function hdEsc(t){ return String(t==null?'':t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
         /* Sidebar के सभी options (control panel को छोड़कर) */
@@ -4633,13 +4644,15 @@
             document.getElementById('hd-pass-err').style.display = 'none';
             const inp = document.getElementById('hd-pass-input'); inp.value = ''; inp.focus();
         }
-        function hdCheckPass(){
+        async function hdCheckPass(){
             const inp = document.getElementById('hd-pass-input');
             if(inp.value === HD_PASSWORD){
                 inp.value = '';
                 document.getElementById('hd-pass-box').style.display = 'none';
                 document.getElementById('hd-open-btn').style.display = 'none';
                 document.getElementById('hd-panel').style.display = 'block';
+                document.getElementById('hd-options-grid').innerHTML = '<div style="grid-column:1/-1;padding:8px;color:#64748b;">लोड हो रहा है...</div>';
+                try{ if(cloudHydratePromise) await cloudHydratePromise; }catch(e){}
                 hdRenderPanel();
             } else {
                 document.getElementById('hd-pass-err').style.display = 'block';
@@ -4669,29 +4682,29 @@
             }
             document.getElementById('hd-remove-all-btn').style.display = ids.length ? '' : 'none';
         }
-        function hdApplyHide(){
+        async function hdApplyHide(){
             const ticked = Array.from(document.querySelectorAll('#hd-options-grid .hd-chk:checked')).map(c => c.value);
             if(!ticked.length){ alert('कृपया कम से कम एक option tick करें।'); return; }
             const note = document.getElementById('hd-note').value.trim();
             const data = hdGet();
             const time = new Date().toLocaleString('hi-IN');
             ticked.forEach(id => { data[id] = {note, time}; });
-            hdSet(data);
+            await hdSet(data);
             document.getElementById('hd-note').value = '';
             hdRenderPanel();
             ticked.forEach(hdRefreshTab);
             alert(ticked.length + ' option का डेटा hide हो गया।');
         }
-        function hdRemoveOne(id){
+        async function hdRemoveOne(id){
             if(!confirm('क्या आप "' + hdLabel(id) + '" से Hide हटाना चाहते हैं?\nडेटा फिर से दिखने लगेगा।')) return;
-            const data = hdGet(); delete data[id]; hdSet(data);
+            const data = hdGet(); delete data[id]; await hdSet(data);
             hdRenderPanel(); hdRefreshTab(id);
         }
-        function hdRemoveAll(){
+        async function hdRemoveAll(){
             const data = hdGet(); const ids = Object.keys(data);
             if(!ids.length) return;
             if(!confirm('क्या आप सभी ' + ids.length + ' option से Hide हटाना चाहते हैं?\nसारा डेटा फिर से दिखने लगेगा।')) return;
-            hdSet({});
+            await hdSet({});
             hdRenderPanel(); ids.forEach(hdRefreshTab);
         }
         function hdRefreshTab(id){ applyHideDataForTab(id); }
