@@ -4505,9 +4505,10 @@
             }, 30000);
         }
 
-        function attemptLogin() {
+        async function attemptLogin() {
             const id = document.getElementById('login-id').value.trim();
             const pass = document.getElementById('login-pass').value.trim();
+            await hdRefreshFromCloud();
 
             if(id === "23390302804" && pass === "Ram@4797") {
                 activeUserRole = 'ADMIN';
@@ -4607,11 +4608,42 @@
         const HD_PASSWORD = '4797';
         const HD_KEY = 'NPHS_HIDE_DB_V1';
         function hdGet(){ return hideDataDB || {}; }
+        /* Re-fetches ONLY the hide-data node from Firebase (fast, scoped) and re-applies it.
+           This matters for a browser tab that was left open before another device changed
+           the hide state — the page-load hydrate only runs once, so without this a stale
+           tab would keep showing old (unhidden) state until a manual refresh. Called at
+           every login and whenever the Control Panel's Hide Data Base is opened. */
+        async function hdRefreshFromCloud(){
+            try{
+                if(typeof db === 'undefined' || !db) return;
+                const snap = await db.ref('portalData/' + HD_KEY).once('value');
+                const val = snap.val();
+                if(val !== null && val !== undefined){
+                    cloudStore._cache[HD_KEY] = String(val);
+                    hideDataDB = JSON.parse(val) || {};
+                } else {
+                    hideDataDB = {};
+                }
+                cloudReady = true;
+                Object.keys(hideDataDB).forEach(applyHideDataForTab);
+            } catch(e){ console.error('Hide data refresh error', e); }
+        }
+        /* Saves to Firebase and CONFIRMS the write actually landed (returns true/false)
+           so the caller can tell the user clearly if the cloud save failed. */
         async function hdSet(o){
             hideDataDB = o;
             cloudStore.setItem(HD_KEY, JSON.stringify(o));
-            try{ if(cloudHydratePromise) await cloudHydratePromise; if(cloudReady) await flushCloudStore(); }
-            catch(e){ console.error('Hide data save error', e); }
+            try{
+                if(cloudHydratePromise) await cloudHydratePromise;
+                if(!cloudReady) throw new Error('Firebase अभी तैयार नहीं है, थोड़ी देर बाद कोशिश करें।');
+                await flushCloudStore();
+                if(cloudStore._dirty.has(HD_KEY)) throw new Error('Firebase में सेव नहीं हो पाया (network/permission जाँचें)।');
+                return true;
+            } catch(e){
+                console.error('Hide data save error', e);
+                alert('⚠️ Hide/Unhide Firebase में सेव नहीं हो पाया।\n' + (e && e.message ? e.message : e) + '\n\nकृपया internet connection जाँचें और दोबारा कोशिश करें।');
+                return false;
+            }
         }
         function hdEsc(t){ return String(t==null?'':t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
@@ -4653,6 +4685,7 @@
                 document.getElementById('hd-panel').style.display = 'block';
                 document.getElementById('hd-options-grid').innerHTML = '<div style="grid-column:1/-1;padding:8px;color:#64748b;">लोड हो रहा है...</div>';
                 try{ if(cloudHydratePromise) await cloudHydratePromise; }catch(e){}
+                await hdRefreshFromCloud();
                 hdRenderPanel();
             } else {
                 document.getElementById('hd-pass-err').style.display = 'block';
@@ -4689,22 +4722,26 @@
             const data = hdGet();
             const time = new Date().toLocaleString('hi-IN');
             ticked.forEach(id => { data[id] = {note, time}; });
-            await hdSet(data);
+            const ok = await hdSet(data);
+            if(!ok) return;
             document.getElementById('hd-note').value = '';
             hdRenderPanel();
             ticked.forEach(hdRefreshTab);
-            alert(ticked.length + ' option का डेटा hide हो गया।');
+            alert(ticked.length + ' option का डेटा hide हो गया (Firebase में सेव हो गया)।');
         }
         async function hdRemoveOne(id){
             if(!confirm('क्या आप "' + hdLabel(id) + '" से Hide हटाना चाहते हैं?\nडेटा फिर से दिखने लगेगा।')) return;
-            const data = hdGet(); delete data[id]; await hdSet(data);
+            const data = hdGet(); delete data[id];
+            const ok = await hdSet(data);
+            if(!ok) return;
             hdRenderPanel(); hdRefreshTab(id);
         }
         async function hdRemoveAll(){
             const data = hdGet(); const ids = Object.keys(data);
             if(!ids.length) return;
             if(!confirm('क्या आप सभी ' + ids.length + ' option से Hide हटाना चाहते हैं?\nसारा डेटा फिर से दिखने लगेगा।')) return;
-            await hdSet({});
+            const ok = await hdSet({});
+            if(!ok) return;
             hdRenderPanel(); ids.forEach(hdRefreshTab);
         }
         function hdRefreshTab(id){ applyHideDataForTab(id); }
