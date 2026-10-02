@@ -721,14 +721,28 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 480px;
-            height: 480px;
+            width: 127mm;
+            height: 127mm;
+            margin-left: -63.5mm;
+            margin-top: -63.5mm;
             opacity: 0.15;
             z-index: 1;
             pointer-events: none;
             object-fit: contain;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
         }
+        .msd-box { border:1px solid #cbd5e1; border-radius:8px; padding:12px; margin-top:14px; background:#f8fafc; }
+        .msd-box h4 { margin:0 0 8px; color:var(--primary); font-size:.95rem; }
+        .msd-row { display:flex; align-items:center; gap:8px; margin:6px 0; flex-wrap:wrap; }
+        .msd-row > label { min-width:120px; font-size:.82rem; font-weight:600; color:#334155; }
+        .msd-row input[type=range] { flex:1; min-width:140px; }
+        .msd-row input[type=number] { width:78px; padding:4px 6px; }
+        .msd-nb { width:30px; height:28px; border:1px solid #94a3b8; background:#fff; border-radius:6px; cursor:pointer; font-weight:700; }
+        .msd-grid { display:grid; grid-template-columns: 1fr 330px; gap:16px; align-items:start; }
+        @media (max-width: 900px) { .msd-grid { grid-template-columns: 1fr; } }
+        .msd-prev-wrap { position:sticky; top:8px; }
+        .msd-prev { width:105mm; height:148.5mm; background:#fff; border:3px double #dc2626; position:relative; overflow:hidden; margin:0 auto; font-family:Arial,sans-serif; zoom:.62; }
+        .msd-prev .ms-header { padding:6mm 4mm 0; }
 
         .ms-content-inner { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
         .ms-student-photo { width: 75px; height: 90px; object-fit: cover; border: 2px solid #1e3a8a; border-radius: 4px; z-index: 3; background: #f1f5f9; flex-shrink: 0; }
@@ -800,7 +814,9 @@
             #patrak-view-area th, #patrak-view-area td { white-space: normal !important; font-size: 7.5pt !important; padding: 3px 4px !important; word-break: break-word; }
             #patrak-view-area tr { page-break-inside: avoid; }
             
-            .marksheet-page-wrapper { margin: 0; width: 100%; height: 287mm; page-break-after: always; break-after: page; border: 6px double #dc2626 !important; }
+            .marksheet-page-wrapper { margin: 0; width: 100%; height: 287mm; page-break-after: always; break-after: page; page-break-inside: avoid; break-inside: avoid; border: 6px double #dc2626 !important; overflow: hidden !important; isolation: isolate; }
+            .marksheet-page-wrapper .ms-watermark { transform: none !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .marksheet-page-wrapper .ms-table tr, .marksheet-page-wrapper .ms-student-row { page-break-inside: avoid; break-inside: avoid; }
 
             #tab-generate-tc .printable { page: tc-cert-page; }
             .tc-page-wrapper { width: 297mm; height: 210mm; margin: 0; }
@@ -1262,6 +1278,96 @@
 
 @media print{body.lh-print-only{background:#fff!important}.lh-print-only *{visibility:hidden!important}.lh-print-only #lh-print-page,.lh-print-only #lh-print-page *{visibility:visible!important}.lh-print-only #lh-print-page{position:absolute;left:0;top:0;width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important}.lh-print-only #lh-print-page::before,.lh-print-only #lh-print-page::after{display:block}.lh-print-only .lh-body-editor{overflow:visible!important}.lh-print-only .lh-body-editor:empty::before{display:none!important}}
 </style>
+<style id="ms9-style">
+/* ===== कक्षा नवमी मार्कशीट (MS9) - sheet design (A4, same CSS used for screen + print) ===== */
+.ms9-sheet{width:210mm;height:296.5mm;position:relative;background:#fff;box-sizing:border-box;overflow:hidden;color:#000;font-family:Arial,'Segoe UI',Tahoma,sans-serif;}
+.ms9-sheet *{box-sizing:border-box;}
+.ms9-sheet th,.ms9-sheet td{white-space:normal;word-break:normal;}
+.ms9-sheet .ms9-info td,.ms9-sheet .ms9-marks td.sub,.ms9-sheet .ms9-stu-r .val,.ms9-sheet .ms9-stu-r .lab{white-space:nowrap;}
+.ms9-sheet .hi{font-family:'Mangal','Nirmala UI','Noto Sans Devanagari','Kohinoor Devanagari',Arial,sans-serif;}
+.ms9-frame{position:absolute;left:4mm;top:4mm;right:4mm;bottom:4mm;border:1.1mm solid #1F3864;padding:2mm 3.5mm 3mm;}
+.ms9-wm{position:absolute;left:50%;top:50%;object-fit:contain;pointer-events:none;z-index:0;}
+.ms9-inner{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+
+.ms9-head{position:relative;text-align:center;}
+.ms9-logo{position:absolute;object-fit:contain;z-index:2;}
+.ms9-school{font-family:'Rockwell Extra Bold','Rockwell','Bookman Old Style','Georgia',serif;font-weight:900;color:#1F3864;white-space:nowrap;line-height:1.15;letter-spacing:.25mm;}
+.ms9-block{color:#C00000;font-weight:900;line-height:1.25;white-space:nowrap;}
+.ms9-runby{color:#E36C09;font-weight:800;line-height:1.25;white-space:nowrap;}
+.ms9-meta{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;margin-top:1mm;}
+.ms9-class{color:#0070C0;font-weight:800;font-size:10pt;text-align:left;padding-left:1mm;}
+.ms9-dise{color:#0070C0;font-weight:800;font-size:10pt;text-align:right;padding-right:1mm;}
+.ms9-mid{text-align:center;line-height:1.2;}
+.ms9-mid .t1{font-size:12.5pt;color:#1F3864;font-weight:700;}
+.ms9-mid .t2{font-family:'Rockwell Extra Bold','Rockwell','Bookman Old Style',Georgia,serif;font-size:11.5pt;font-weight:900;color:#1F3864;}
+.ms9-mid .t3{font-size:10.5pt;color:#C00000;font-weight:800;}
+.ms9-mid .t4{font-size:10.5pt;color:#C00000;font-weight:700;}
+
+.ms9-info{width:100%;border-collapse:collapse;border:1mm solid #0070C0;table-layout:fixed;}
+.ms9-info th{font-weight:700;text-align:center;padding:2mm 1mm;border-right:.5mm solid #1F3864;border-bottom:.5mm solid #C00000;color:#C00000;line-height:1.25;}
+.ms9-info th .hi{display:block;font-size:10.5pt;}
+.ms9-info th .en{display:block;font-size:8.5pt;font-weight:700;}
+.ms9-info td{text-align:center;font-weight:800;font-size:9.5pt;padding:1.4mm 1mm;border-right:.5mm solid #1F3864;white-space:nowrap;overflow:hidden;}
+.ms9-info th:last-child,.ms9-info td:last-child{border-right:none;}
+
+.ms9-stu{display:grid;grid-template-columns:1fr 29mm;gap:6mm;align-items:center;}
+.ms9-stu-r{display:grid;grid-template-columns:84mm 1fr;align-items:center;min-height:7.5mm;}
+.ms9-stu-r .lab{color:#E00000;font-weight:700;font-size:9pt;white-space:nowrap;}
+.ms9-stu-r .lab .hi{font-size:10.5pt;}
+.ms9-stu-r .val{font-weight:800;font-size:10pt;white-space:nowrap;overflow:hidden;}
+.ms9-photo{width:29mm;height:36mm;border:.35mm solid #000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:9pt;overflow:hidden;background:rgba(255,255,255,.4);}
+.ms9-photo img{width:100%;height:100%;object-fit:cover;}
+
+.ms9-marks{width:100%;border-collapse:collapse;border:1mm solid #0070C0;table-layout:fixed;}
+.ms9-marks th,.ms9-marks td{border:.35mm solid #C00000;text-align:center;padding:.6mm .5mm;line-height:1.2;}
+.ms9-marks th{color:#0070C0;font-weight:700;font-size:7pt;}
+.ms9-marks th .hi{display:block;font-size:7.5pt;}
+.ms9-marks th .en{display:block;font-family:'Cambria','Georgia',serif;font-weight:700;font-size:7pt;color:#1F4E9A;}
+.ms9-marks td{font-weight:700;font-size:9.5pt;height:8.3mm;}
+.ms9-marks td.sub{text-align:left;padding-left:1mm;font-size:9pt;white-space:nowrap;}
+.ms9-marks td.tot{color:#C00000;font-size:10pt;}
+.ms9-marks td.rm{font-size:7pt;}
+.ms9-marks .fail{color:#C00000;}
+.ms9-marks .pass{color:#1a7f37;}
+
+.ms9-res{width:100%;border-collapse:collapse;border:1mm solid #0070C0;table-layout:fixed;}
+.ms9-res th{border-right:.4mm solid #C00000;border-bottom:.4mm solid #C00000;padding:1.2mm .6mm;line-height:1.2;font-weight:700;}
+.ms9-res th .hi{display:block;font-size:8.5pt;color:#76933C;}
+.ms9-res th .en{display:block;font-size:7.5pt;color:#7030A0;font-weight:800;}
+.ms9-res td{border-right:.4mm solid #C00000;text-align:center;font-weight:800;font-size:9.5pt;height:12mm;}
+.ms9-res th:last-child,.ms9-res td:last-child{border-right:none;}
+
+.ms9-sign{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm;padding-top:14mm;font-size:8.5pt;text-align:center;}
+.ms9-sign div{border-top:.5mm solid #000;padding-top:1mm;line-height:1.3;}
+
+.ms9-div{width:100%;border-collapse:collapse;border:1mm solid #0070C0;table-layout:fixed;}
+.ms9-div th,.ms9-div td{border:.35mm solid #C00000;text-align:center;padding:.8mm .5mm;line-height:1.25;}
+.ms9-div th{color:#E36C09;font-weight:800;font-size:8pt;}
+.ms9-div th .hi{font-size:9pt;}
+.ms9-div td{font-size:8.5pt;font-weight:500;}
+.ms9-div td.lab{font-size:9pt;}
+
+/* ----- UI (format + create screens) ----- */
+.ms9-pages{background:#e2e8f0;padding:12px;border-radius:8px;overflow:auto;}
+.ms9-pages .ms9-page-wrap{margin:0 auto 14px auto;width:fit-content;box-shadow:0 2px 12px rgba(0,0,0,.3);}
+.ms9-fgrid{display:grid;grid-template-columns:minmax(340px,1fr) minmax(300px,520px);gap:18px;align-items:start;}
+.ms9-fbox{border:1px solid #cbd5e1;border-radius:8px;padding:12px;margin-bottom:12px;background:#fff;}
+.ms9-fbox h4{color:var(--primary);margin-bottom:8px;font-size:.95rem;}
+.ms9-fbox label{font-size:.78rem;font-weight:700;color:#475569;display:block;margin:6px 0 2px;}
+.ms9-fbox input[type=text],.ms9-fbox input[type=number],.ms9-fbox textarea{width:100%;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:.88rem;}
+.ms9-frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px;}
+.ms9-g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px;}
+.ms9-srow{display:grid;grid-template-columns:78px 30px 1fr 30px 72px 26px;gap:5px;align-items:center;margin:5px 0;font-size:.8rem;}
+.ms9-srow label{margin:0;}
+.ms9-srow input[type=number]{padding:4px 5px;}
+.ms9-nb{border:1px solid #94a3b8;background:#f1f5f9;border-radius:5px;cursor:pointer;font-weight:700;padding:3px 0;}
+.ms9-nb:hover{background:#dbeafe;}
+.ms9-thumb{max-height:54px;max-width:90px;border:1px dashed #94a3b8;border-radius:4px;padding:2px;background:#f8fafc;}
+.ms9-sticky{position:sticky;top:8px;}
+.ms9-chip{display:inline-block;background:#e0f2fe;color:#075985;border-radius:12px;padding:2px 9px;margin:2px;font-size:.75rem;font-weight:700;}
+@media (max-width:1100px){.ms9-fgrid{grid-template-columns:1fr;}.ms9-sticky{position:static;}}
+
+</style>
 </head>
 <body>
 
@@ -1561,6 +1667,18 @@
                     <div class="menu-item" data-perm="marksheet-range" onclick="switchTab('marksheet-range')">1A. Roll No Range Marksheet</div>
                     <div class="menu-item" data-perm="correction-marksheet" onclick="switchTab('correction-marksheet')">2. मार्कशीट प्रारूप सुधार</div>
                 </div>
+
+                <!-- CLASS 9TH MARKSHEET MENU -->
+                <div class="menu-item" data-perm="ms9-sub" onclick="toggleSubmenu('ms9-sub')">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>8. कक्षा- नवमी मार्कशीट</span>
+                    <i class="fa-solid fa-chevron-down" style="margin-left:auto; font-size:0.7rem;"></i>
+                </div>
+                <div id="ms9-sub" class="submenu">
+                    <div class="menu-item" data-perm="ms9-format" onclick="switchTab('ms9-format')">1. Marksheet Format</div>
+                    <div class="menu-item" data-perm="ms9-create" onclick="switchTab('ms9-create')">2. Create Marksheet</div>
+                </div>
+
 
                 <div class="menu-category">सिस्टम सेटिंग्स</div>
                 <div class="menu-item" data-perm="control-panel" onclick="switchTab('control-panel')">
@@ -3390,10 +3508,51 @@
                                 <div class="form-group"><label>रजिस्ट्रेशन नं. (Registration No)</label><input type="text" id="cfg-reg-no" value="04/14/01/13295/11"></div>
                                 <div class="form-group"><label>स्कूल डाइस कोड (Dise Code)</label><input type="text" id="cfg-dise-code" value="23390302804"></div>
                             </div>
+                            <div id="msd-root"></div>
                             <div style="margin-top: 20px; text-align: right;">
                                 <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> फ़ॉर्मेट सेटिंग्स सेव करें</button>
                             </div>
                         </form>
+                    </div>
+                </section>
+
+                
+                <!-- CLASS 9TH MARKSHEET : FORMAT -->
+                <section id="tab-ms9-format" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header"><i class="fa-solid fa-palette"></i> कक्षा- नवमी मार्कशीट — Marksheet Format (Header / Logo / Watermark)</div>
+                        <div id="ms9-format-root"></div>
+                    </div>
+                </section>
+
+                <!-- CLASS 9TH MARKSHEET : CREATE -->
+                <section id="tab-ms9-create" class="tab-content hidden">
+                    <div class="card">
+                        <div class="card-header"><i class="fa-solid fa-file-circle-plus"></i> कक्षा- नवमी मार्कशीट — Create Marksheet</div>
+                        <div class="filter-container">
+                            <div class="filter-row">
+                                <div class="filter-item"><label>सत्र (Year)</label>
+                                    <select id="ms9-year"><option>2026-27</option><option>2027-28</option><option>2028-29</option><option>2029-30</option></select></div>
+                                <div class="filter-item"><label>कक्षा (Class)</label><select id="ms9-class"></select></div>
+                                <div class="filter-item"><label>परीक्षा (Exam Name)</label>
+                                    <select id="ms9-exam"><option value="ANNUAL">ANNUAL</option><option value="PRE BOARD">PRE BOARD</option></select></div>
+                                <button class="btn btn-warning" onclick="ms9Show()"><i class="fa-solid fa-eye"></i> Show</button>
+                            </div>
+                        </div>
+                        <div id="ms9-show-panel" style="display:none; margin-top:14px;">
+                            <div id="ms9-show-info" style="margin-bottom:10px; font-size:.9rem; color:#334155;"></div>
+                            <div class="filter-container">
+                                <div class="filter-row">
+                                    <div class="filter-item"><label>Roll No से (From)</label><input type="number" id="ms9-from"></div>
+                                    <div class="filter-item"><label>Roll No तक (To)</label><input type="number" id="ms9-to"></div>
+                                    <div class="filter-item"><label>प्रकाशन तिथि (Publish Date)</label><input type="text" id="ms9-pubdate" placeholder="DD/MM/YYYY"></div>
+                                    <div class="filter-item"><label>पर्यावरण शिक्षा ग्रेड</label><input type="text" id="ms9-env" style="width:90px" placeholder="A"></div>
+                                    <button class="btn btn-success" onclick="ms9Generate()"><i class="fa-solid fa-file-invoice"></i> Generate Marksheet</button>
+                                    <button class="btn btn-primary" onclick="ms9Print()"><i class="fa-solid fa-print"></i> Print</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="ms9-output" style="margin-top:14px;"></div>
                     </div>
                 </section>
 
@@ -3452,6 +3611,9 @@
                                     <label><input type="checkbox" class="tch-perm-chk" value="generate-marksheet" checked> Print Marksheet</label>
                                     <label><input type="checkbox" class="tch-perm-chk" value="marksheet-range" checked> Roll Range Marksheet</label>
                                     <label><input type="checkbox" class="tch-perm-chk" value="correction-marksheet"> Correction Marksheet</label>
+                                    <label><input type="checkbox" class="tch-perm-chk" value="ms9-sub" checked> कक्षा नवमी मार्कशीट</label>
+                                    <label><input type="checkbox" class="tch-perm-chk" value="ms9-format"> Class 9 Marksheet Format</label>
+                                    <label><input type="checkbox" class="tch-perm-chk" value="ms9-create" checked> Class 9 Create Marksheet</label>
                                 </div>
 
                                 <div style="margin-top:15px; text-align:right;">
@@ -4781,6 +4943,9 @@
             if(tabId === 'admit-card-range') fillRangeAdmitSelects();
             if(tabId === 'marksheet-range') fillRangeMarksheetClass();
             if(tabId === 'generate-marksheet') resetMarksheetOutputPlaceholder();
+            if(tabId === 'correction-marksheet') loadMarksheetConfigForm();
+            if(tabId === 'ms9-format') ms9InitFormat();
+            if(tabId === 'ms9-create') ms9InitCreate();
             if(tabId === 'create-subject') loadClassSubjectForm();
             if(tabId === 'exam-timetable') renderSavedTimeTableList();
             if(tabId === 'tc-list') renderTCListTable();
@@ -4979,7 +5144,7 @@
             let keys = [
                 'NPHS_EXCEL_STUDENTS_V2','NPHS_EXCEL_DROPPED_V2','NPHS_SUBJECT_LIST_DB','NPHS_SUBJECT_LIST_EXAM_DB',
                 'NPHS_EXAM_MARKS_DB','NPHS_TIME_TABLE_DB','NPHS_TC_RECORDS_DB','NPHS_TEACHER_ACCOUNTS_DB',
-                'NPHS_CORRECTION_HISTORY_DB','NPHS_ACTIVITY_LOG_DB','NPHS_MARKSHEET_CFG','NPHS_SCHOOL_LOGO','NPHS_SCHOOL_WATERMARK','NPHS_RESULT_HOLD_DB','NPHS_ROLL_CONFIG_DB','NPHS_NOTICE_DB'
+                'NPHS_CORRECTION_HISTORY_DB','NPHS_ACTIVITY_LOG_DB','NPHS_MARKSHEET_CFG','NPHS_MS9_CFG','NPHS_MS9_LOGO_L','NPHS_MS9_LOGO_R','NPHS_MS9_WM','NPHS_MARKSHEET_LOGO_L','NPHS_MARKSHEET_LOGO_R','NPHS_MARKSHEET_WM','NPHS_SCHOOL_LOGO','NPHS_SCHOOL_WATERMARK','NPHS_RESULT_HOLD_DB','NPHS_ROLL_CONFIG_DB','NPHS_NOTICE_DB'
             ];
             keys.forEach(k => cloudStore.removeItem(k));
             location.reload();
@@ -5034,7 +5199,7 @@
             let keys = [
                 'NPHS_EXCEL_STUDENTS_V2','NPHS_EXCEL_DROPPED_V2','NPHS_SUBJECT_LIST_DB','NPHS_SUBJECT_LIST_EXAM_DB',
                 'NPHS_EXAM_MARKS_DB','NPHS_TIME_TABLE_DB','NPHS_TC_RECORDS_DB','NPHS_TEACHER_ACCOUNTS_DB',
-                'NPHS_CORRECTION_HISTORY_DB','NPHS_ACTIVITY_LOG_DB','NPHS_MARKSHEET_CFG','NPHS_SCHOOL_LOGO','NPHS_SCHOOL_WATERMARK','NPHS_RESULT_HOLD_DB','NPHS_ROLL_CONFIG_DB','NPHS_NOTICE_DB'
+                'NPHS_CORRECTION_HISTORY_DB','NPHS_ACTIVITY_LOG_DB','NPHS_MARKSHEET_CFG','NPHS_MS9_CFG','NPHS_MS9_LOGO_L','NPHS_MS9_LOGO_R','NPHS_MS9_WM','NPHS_MARKSHEET_LOGO_L','NPHS_MARKSHEET_LOGO_R','NPHS_MARKSHEET_WM','NPHS_SCHOOL_LOGO','NPHS_SCHOOL_WATERMARK','NPHS_RESULT_HOLD_DB','NPHS_ROLL_CONFIG_DB','NPHS_NOTICE_DB'
             ];
             keys.forEach(k => cloudStore.removeItem(k));
             document.getElementById('delall-confirm-modal-2').style.display = 'none';
@@ -9839,6 +10004,8 @@ function initPortalYear(){
 
             let logoImgSrc = logoDataURL || "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><circle cx='40' cy='40' r='36' fill='%23cbd5e1'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%23475569'>LOGO</text></svg>";
 
+            const msdC = msdCfg(marksheetConfigDB), msdWmSrc = msdImgFor('W', '');
+
             // चुनी गई क्लास व सत्र के छात्रों में से ही मार्कशीट बनेगी
             let clsStudents = students.filter(s => s['CLASS'] === cls && s['YEAR'] === yr);
 
@@ -9915,17 +10082,17 @@ function initPortalYear(){
 
                 html += `
                     <div class="marksheet-page-wrapper">
-                        ${watermarkDataURL ? `<img src="${watermarkDataURL}" class="ms-watermark">` : ''}
+                        ${msdWmSrc ? `<img src="${msdWmSrc}" class="ms-watermark" style="${msdWmStyle(msdC.wm)}">` : ''}
 
                         <div class="ms-content-inner">
                             <div>
                                 <div class="ms-header">
-                                    <img src="${logoImgSrc}" class="ms-logo ms-logo-left">
+                                    <img src="${msdImgFor('L', logoImgSrc)}" class="ms-logo ms-logo-left" style="${msdLogoStyle(msdC.logoL, 'L')}">
                                     <h2>${marksheetConfigDB.schoolName}</h2>
                                     <h3>${marksheetConfigDB.blockDist}</h3>
                                     <h4>${marksheetConfigDB.runBy}</h4>
                                     <p>${marksheetConfigDB.recognized}</p>
-                                    <img src="${logoImgSrc}" class="ms-logo ms-logo-right">
+                                    <img src="${msdImgFor('R', logoImgSrc)}" class="ms-logo ms-logo-right" style="${msdLogoStyle(msdC.logoR, 'R')}">
                                 </div>
 
                                 <div class="ms-sub-bar">
@@ -10087,6 +10254,108 @@ function initPortalYear(){
         }
 
         /* --- MARKSHEET CONFIG & LOGO & WATERMARK FUNCTIONS --- */
+        /* ===== अंकसूची डिज़ाइन: लोगो (Left/Right) + वॉटरमार्क — size / आगे-पीछे / ऊपर-नीचे =====
+           सब कुछ cloudStore (Firebase) में ही सेव होता है:
+           NPHS_MARKSHEET_CFG (size/position), NPHS_MARKSHEET_LOGO_L, NPHS_MARKSHEET_LOGO_R, NPHS_MARKSHEET_WM */
+        const MSD_KEYS = { L: 'NPHS_MARKSHEET_LOGO_L', R: 'NPHS_MARKSHEET_LOGO_R', W: 'NPHS_MARKSHEET_WM' };
+        const MSD_DEFAULT = { logoL: { size: 21.2, x: 0, y: 0 }, logoR: { size: 21.2, x: 0, y: 0 }, wm: { size: 127, x: 0, y: 0, opacity: 15 } };
+        let msdDraft = null, msdImgs = { L: '', R: '', W: '' };
+        function msdCfg(src) {
+            const c = JSON.parse(JSON.stringify(MSD_DEFAULT)), o = src || {};
+            ['logoL', 'logoR', 'wm'].forEach(k => { if (o[k] && typeof o[k] === 'object') Object.keys(c[k]).forEach(f => { const v = parseFloat(o[k][f]); if (!isNaN(v)) c[k][f] = v; }); });
+            return c;
+        }
+        /* मार्कशीट पर लगने वाली इमेज: अंकसूची की अपनी इमेज, न हो तो पोर्टल वाला स्कूल लोगो / वॉटरमार्क */
+        function msdImgFor(side, fallbackLogo) {
+            const own = cloudStore.getItem(MSD_KEYS[side]) || '';
+            if (own) return own;
+            return side === 'W' ? (watermarkDataURL || '') : fallbackLogo;
+        }
+        function msdLogoStyle(o, side) {
+            return side === 'L'
+                ? `width:${o.size}mm;height:${o.size}mm;left:${o.x}mm;top:${o.y}mm;`
+                : `width:${o.size}mm;height:${o.size}mm;right:${-o.x}mm;top:${o.y}mm;`;
+        }
+        function msdWmStyle(w) {
+            return `width:${w.size}mm;height:${w.size}mm;margin-left:${-w.size / 2 + w.x}mm;margin-top:${-w.size / 2 + w.y}mm;opacity:${w.opacity / 100};transform:none;`;
+        }
+        function msdGet(path) { const k = path.split('.'); return msdDraft[k[0]][k[1]]; }
+        function msdSlider(path, label, min, max, step, unit, btns) {
+            const id = path.replace('.', '-'), v = msdGet(path), b = btns || ['−', '+'];
+            return `<div class="msd-row"><label>${label}</label>
+                <button type="button" class="msd-nb" onclick="msdNudge('${path}',-${step},${min},${max})">${b[0]}</button>
+                <input type="range" id="msds-${id}" min="${min}" max="${max}" step="${step}" value="${v}" oninput="msdSet('${path}',this.value)">
+                <button type="button" class="msd-nb" onclick="msdNudge('${path}',${step},${min},${max})">${b[1]}</button>
+                <input type="number" id="msdn-${id}" step="${step}" value="${v}" oninput="msdSet('${path}',this.value)"><span>${unit}</span></div>`;
+        }
+        function msdImgBlock(key, title, path, isWm) {
+            return `<div class="msd-box"><h4>${title}</h4>
+                <div class="msd-row"><input type="file" accept="image/*" onchange="msdUpload('${key}',this)">
+                    <button type="button" class="btn btn-danger" onclick="msdRemove('${key}')"><i class="fa-solid fa-trash"></i> हटाएं</button>
+                    <img id="msd-thumb-${key}" style="width:44px;height:44px;object-fit:contain;border:1px solid #cbd5e1;border-radius:6px;background:#fff;display:none;"></div>
+                ${msdSlider(path + '.size', 'साइज़ (Size)', isWm ? 40 : 8, isWm ? 190 : 45, isWm ? 1 : 0.5, 'mm', ['−', '+'])}
+                ${msdSlider(path + '.x', 'आगे-पीछे (X)', -80, 80, 0.5, 'mm', ['◀', '▶'])}
+                ${msdSlider(path + '.y', 'ऊपर-नीचे (Y)', -80, 80, 0.5, 'mm', ['▲', '▼'])}
+                ${isWm ? msdSlider(path + '.opacity', 'हल्का/गहरा', 3, 40, 1, '%', ['−', '+']) : ''}
+                ${isWm ? '' : '<p style="font-size:.75rem;color:#64748b;margin:4px 0 0;">इमेज न चुनने पर पोर्टल का स्कूल लोगो लगेगा।</p>'}
+            </div>`;
+        }
+        function msdInit() {
+            const root = document.getElementById('msd-root'); if (!root) return;
+            msdDraft = msdCfg(marksheetConfigDB);
+            msdImgs = { L: cloudStore.getItem(MSD_KEYS.L) || '', R: cloudStore.getItem(MSD_KEYS.R) || '', W: cloudStore.getItem(MSD_KEYS.W) || '' };
+            root.innerHTML = `<div class="msd-grid"><div>
+                    ${msdImgBlock('L', 'Left Logo (बायाँ लोगो)', 'logoL', false)}
+                    ${msdImgBlock('R', 'Right Logo (दायाँ लोगो)', 'logoR', false)}
+                    ${msdImgBlock('W', 'Watermark (वॉटरमार्क)', 'wm', true)}
+                </div>
+                <div class="msd-prev-wrap"><div style="text-align:center;font-size:.8rem;color:#64748b;margin-bottom:4px;">Live Preview (सेव करने पर ही मार्कशीट में लागू होगा)</div>
+                    <div id="msd-prev" class="msd-prev"></div></div></div>`;
+            msdThumbs(); msdPreview();
+        }
+        function msdThumbs() {
+            ['L', 'R', 'W'].forEach(k => {
+                const t = document.getElementById('msd-thumb-' + k); if (!t) return;
+                if (msdImgs[k]) { t.src = msdImgs[k]; t.style.display = 'inline-block'; } else t.style.display = 'none';
+            });
+        }
+        function msdPreview() {
+            const el = document.getElementById('msd-prev'); if (!el || !msdDraft) return;
+            const g = id => (document.getElementById(id) || {}).value || '';
+            const ph = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><circle cx='40' cy='40' r='36' fill='%23cbd5e1'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='10' fill='%23475569'>LOGO</text></svg>";
+            const fb = logoDataURL || ph;
+            const L = msdImgs.L || fb, R = msdImgs.R || fb, W = msdImgs.W || watermarkDataURL || '';
+            const esc = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+            el.innerHTML = `${W ? `<img class="ms-watermark" src="${esc(W)}" style="${msdWmStyle(msdDraft.wm)}">` : ''}
+                <div class="ms-header" style="position:relative;z-index:2;">
+                    <img src="${esc(L)}" class="ms-logo ms-logo-left" style="${msdLogoStyle(msdDraft.logoL, 'L')}">
+                    <h2 style="font-size:.9rem">${esc(g('cfg-school-name'))}</h2><h3 style="font-size:.55rem">${esc(g('cfg-block-dist'))}</h3>
+                    <h4 style="font-size:.5rem">${esc(g('cfg-run-by'))}</h4><p style="font-size:.5rem">${esc(g('cfg-recognized'))}</p>
+                    <img src="${esc(R)}" class="ms-logo ms-logo-right" style="${msdLogoStyle(msdDraft.logoR, 'R')}">
+                </div>`;
+        }
+        function msdSet(path, val) {
+            const v = parseFloat(val); if (isNaN(v)) return;
+            const k = path.split('.'); msdDraft[k[0]][k[1]] = v;
+            const id = path.replace('.', '-');
+            const r = document.getElementById('msds-' + id), n = document.getElementById('msdn-' + id);
+            if (r && r.value !== String(v)) r.value = v;
+            if (n && n.value !== String(v)) n.value = v;
+            msdPreview();
+        }
+        function msdNudge(path, d, min, max) {
+            let v = (parseFloat(msdGet(path)) || 0) + d;
+            msdSet(path, Math.max(min, Math.min(max, Math.round(v * 100) / 100)));
+        }
+        function msdUpload(key, input) {
+            const f = input.files && input.files[0]; if (!f) return;
+            ms9ReadImg(f, key === 'W' ? 900 : 500, d => { msdImgs[key] = d; msdThumbs(); msdPreview(); });
+        }
+        function msdRemove(key) { msdImgs[key] = ''; msdThumbs(); msdPreview(); }
+        ['cfg-school-name', 'cfg-block-dist', 'cfg-run-by', 'cfg-recognized'].forEach(id => {
+            document.addEventListener('input', e => { if (e.target && e.target.id === id) msdPreview(); });
+        });
+
         function loadMarksheetConfigForm() {
             document.getElementById('cfg-school-name').value = marksheetConfigDB.schoolName || '';
             document.getElementById('cfg-block-dist').value = marksheetConfigDB.blockDist || '';
@@ -10094,6 +10363,7 @@ function initPortalYear(){
             document.getElementById('cfg-recognized').value = marksheetConfigDB.recognized || '';
             document.getElementById('cfg-reg-no').value = marksheetConfigDB.regNo || '';
             document.getElementById('cfg-dise-code').value = marksheetConfigDB.diseCode || '';
+            msdInit();
         }
 
         function saveMarksheetConfig(e) {
@@ -10106,7 +10376,9 @@ function initPortalYear(){
                 regNo: document.getElementById('cfg-reg-no').value.trim(),
                 diseCode: document.getElementById('cfg-dise-code').value.trim()
             };
+            if (msdDraft) { marksheetConfigDB.logoL = msdDraft.logoL; marksheetConfigDB.logoR = msdDraft.logoR; marksheetConfigDB.wm = msdDraft.wm; }
             cloudStore.setItem('NPHS_MARKSHEET_CFG', JSON.stringify(marksheetConfigDB));
+            ['L', 'R', 'W'].forEach(k => { if (msdImgs[k]) cloudStore.setItem(MSD_KEYS[k], msdImgs[k]); else cloudStore.removeItem(MSD_KEYS[k]); });
             alert("अंकसूची डिज़ाइन सेटिंग्स सुरक्षित कर ली गईं!");
         }
 
@@ -11102,6 +11374,523 @@ function certPrintCertificate(){
   setTimeout(()=>{ if(frame.isConnected) printNow(); },1800);
 }
 
+
+</script>
+<script>
+/* ============================================================
+   कक्षा- नवमी मार्कशीट (MS9)
+   Data Firebase-backed cloudStore me hi save hota hai:
+   NPHS_MS9_CFG (text/size/position settings), NPHS_MS9_LOGO_L, NPHS_MS9_LOGO_R, NPHS_MS9_WM
+   ============================================================ */
+const MS9_KEYS = { cfg: 'NPHS_MS9_CFG', L: 'NPHS_MS9_LOGO_L', R: 'NPHS_MS9_LOGO_R', W: 'NPHS_MS9_WM' };
+const MS9_DEFAULT = {
+    schoolName: 'NAHUSH PUBLIC HIGH SCHOOL MOHLA',
+    blockLine: 'BLOCK MAJHOLI DISTT. JABALPUR M.P.',
+    runBy: '(RUN BY GURU KRIPA LOK KALYAN SAMITI MOHLA)',
+    titleHi: 'अंकसूची',
+    titleEn: 'MARKSHEET',
+    recogLine: 'मध्यप्रदेश शासन द्वारा मान्यता प्राप्त',
+    diseCode: '23390302804',
+    schoolCode: '712384',
+    medium: 'HINDI',
+    sizes: { school: 20, block: 13, runby: 10.5 },
+    logoL: { size: 22, x: 0, y: 0 },
+    logoR: { size: 22, x: 0, y: 0 },
+    wm: { size: 130, x: 0, y: 0, opacity: 12 },
+    marks: { thMax: 75, thMin: 25, prMax: 25, prMin: 8, wQ: 5, wH: 5 },
+    codes: 'HINDI=401\nENGLISH=411\nSANSKRIT=512\nMATHS (STANDARD)=100\nMATHS=100\nSCIENCE=200\nSOCIAL SCIENCE=300'
+};
+const MS9_FALLBACK_SUBJECTS = [
+    { name: 'HINDI' }, { name: 'ENGLISH' }, { name: 'SANSKRIT' },
+    { name: 'MATHS (STANDARD)' }, { name: 'SCIENCE' }, { name: 'SOCIAL SCIENCE' }
+];
+
+let ms9Draft = null;
+let ms9DraftImgs = { L: '', R: '', W: '' };
+let ms9Zoom = 0.6;
+let ms9PagesHtml = '';
+let ms9RafPending = false;
+
+function ms9Esc(s) {
+    return String(s === undefined || s === null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function ms9Clone(o) { return JSON.parse(JSON.stringify(o)); }
+function ms9Merge(base, over) {
+    Object.keys(over || {}).forEach(k => {
+        if (over[k] && typeof over[k] === 'object' && !Array.isArray(over[k]) && base[k] && typeof base[k] === 'object') ms9Merge(base[k], over[k]);
+        else base[k] = over[k];
+    });
+    return base;
+}
+function ms9LoadCfg() {
+    let saved = null;
+    try { saved = JSON.parse(cloudStore.getItem(MS9_KEYS.cfg) || 'null'); } catch (e) { saved = null; }
+    return ms9Merge(ms9Clone(MS9_DEFAULT), saved || {});
+}
+function ms9SavedImgs() {
+    return { L: cloudStore.getItem(MS9_KEYS.L) || '', R: cloudStore.getItem(MS9_KEYS.R) || '', W: cloudStore.getItem(MS9_KEYS.W) || '' };
+}
+function ms9GetPath(o, path) { return path.split('.').reduce((a, k) => (a ? a[k] : undefined), o); }
+function ms9SetPath(o, path, v) {
+    const ks = path.split('.'); const last = ks.pop();
+    const t = ks.reduce((a, k) => a[k], o); t[last] = v;
+}
+function ms9Fmt(v) {
+    if (v === '' || v === null || v === undefined) return '';
+    const x = Number(v);
+    if (isNaN(x)) return String(v);
+    return String(Math.round(x * 100) / 100);
+}
+/* 2 decimal tak truncate (3.265 -> 3.26, 3.2 -> 3.20) */
+function ms9Fmt2(v) {
+    if (v === '' || v === null || v === undefined) return '';
+    const x = Number(v);
+    if (isNaN(x)) return String(v);
+    return (Math.floor(x * 100 + 1e-6) / 100).toFixed(2);
+}
+function ms9Tr2(x) { return Math.floor(x * 100 + 1e-6) / 100; }
+function ms9Div(p) { return p >= 60 ? 'FIRST' : p >= 45 ? 'SECOND' : p >= 33 ? 'THIRD' : '-'; }
+function ms9Grade(p) { return p >= 85 ? 'A+' : p >= 75 ? 'A' : p >= 60 ? 'B' : p >= 45 ? 'C' : p >= 33 ? 'D' : 'E'; }
+
+function ms9CodeMap(cfg) {
+    const m = {};
+    String(cfg.codes || '').split('\n').forEach(line => {
+        const i = line.lastIndexOf('=');
+        if (i > 0) m[line.slice(0, i).trim().toUpperCase()] = line.slice(i + 1).trim();
+    });
+    return m;
+}
+function ms9Subjects(cls, yr, cfg) {
+    const list = subjectListDB[`${cls}_${yr}`];
+    const base = (list && list.length) ? list : MS9_FALLBACK_SUBJECTS;
+    const codes = ms9CodeMap(cfg);
+    return base.map(s => {
+        const name = String(s.name || '').trim();
+        const code = codes[name.toUpperCase()];
+        return {
+            name,
+            maxQ: s.maxQ || 60,
+            maxH: s.maxH || 60,
+            disp: (/^\(/.test(name) || !code) ? name : `(${code}) ${name}`
+        };
+    });
+}
+
+/* ---------- marks calculation ----------
+   Annual(TH/PR) = वार्षिक परीक्षा, Weightage (ii) = Quarterly का 5%, (iii) = Half Yearly का 5%
+   Final TH = Annual TH | Final PR = (i + ii + iii) | Grand Total = Final TH + Final PR */
+function ms9Compute(st, ctx) {
+    const M = ctx.cfg.marks, roll = st['ROLL NO.'], cls = ctx.cls, yr = ctx.yr;
+    const get = ex => { const t = examMarksDB[`${cls}_${yr}_${ex}`]; return t ? t[roll] : undefined; };
+    const A = get(ctx.exam), Q = get('QUARTERLY'), H = get('HALF YEARLY');
+    const n = v => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
+    const has = v => v !== undefined && v !== null && String(v).trim() !== '';
+    const t = { minTh: 0, minPr: 0, maxTh: 0, maxPr: 0, aTh: 0, aPr: 0, q: 0, h: 0, fTh: 0, fPr: 0, grand: 0 };
+    let allPass = true;
+    const rows = ctx.subs.map(s => {
+        const aThRaw = A ? A[s.name] : undefined, aPrRaw = A ? A[s.name + '_PR'] : undefined;
+        /* Weightage = (TH + PR) total ka X% (jaise TH 50 + PR 20 = 70, 5% = 3.5) */
+        const qTh = Q ? Q[s.name] : undefined, qPr = Q ? Q[s.name + '_PR'] : undefined;
+        const hTh = H ? H[s.name] : undefined, hPr = H ? H[s.name + '_PR'] : undefined;
+        const qv = (has(qTh) || has(qPr)) ? (n(qTh) + n(qPr)) : undefined;
+        const hv = (has(hTh) || has(hPr)) ? (n(hTh) + n(hPr)) : undefined;
+        const qW = has(qv) ? ms9Tr2(n(qv) * n(M.wQ) / 100) : 0;
+        const hW = has(hv) ? ms9Tr2(n(hv) * n(M.wH) / 100) : 0;
+        t.minTh += M.thMin; t.minPr += M.prMin; t.maxTh += M.thMax; t.maxPr += M.prMax;
+        const r = { disp: s.disp, minTh: M.thMin, minPr: M.prMin, maxTh: M.thMax, maxPr: M.prMax,
+                    aTh: '', aPr: '', q: '', h: '', fTh: '', fPr: '', grand: '', remark: '' };
+        if (A) {
+            const fTh = n(aThRaw), fPr = Math.round((n(aPrRaw) + qW + hW) * 100) / 100, grand = Math.round(Math.round((fTh + fPr) * 100) / 100); /* GRAND TOTAL: .5 ya zyada = upar, .4 ya kam = niche */
+            const pass = fTh >= M.thMin && fPr >= M.prMin;
+            if (!pass) allPass = false;
+            r.aTh = has(aThRaw) ? aThRaw : '0'; r.aPr = has(aPrRaw) ? aPrRaw : '0';
+            r.fTh = fTh; r.fPr = fPr; r.grand = grand; r.remark = !pass ? 'FAIL' : (grand >= 75 ? 'DISTN' : '-');
+            t.aTh += fTh; t.aPr += n(aPrRaw); t.fTh += fTh; t.fPr += fPr; t.grand += grand;
+        }
+        /* Quarterly / Half Yearly weightage: Annual marks bhare ho ya na ho, entry hote hi aa jaye */
+        r.q = has(qv) ? qW : ''; r.h = has(hv) ? hW : '';
+        t.q += qW; t.h += hW;
+        return r;
+    });
+    const maxAll = t.maxTh + t.maxPr;
+    const perc = (A && maxAll > 0) ? (t.grand / maxAll * 100) : 0;
+    return { rows, t, hasData: !!A, hasQ: !!Q, hasH: !!H, result: A ? (allPass ? 'PASS' : 'FAIL') : '', perc, maxAll, pass: allPass };
+}
+
+/* ---------- ek student ka A4 sheet ---------- */
+function ms9Sheet(st, ctx) {
+    const c = ctx.cfg, e = ms9Esc, r = ms9Compute(st, ctx);
+    const T = r.t, has = r.hasData;
+    const lg = (o, side) => {
+        const left = side === 'L' ? `${4 + o.x}mm` : `calc(100% - ${o.size + 4}mm + ${o.x}mm)`;
+        return `left:${left};top:${7 + o.y}mm;width:${o.size}mm;height:${o.size}mm;`;
+    };
+    const w = c.wm;
+    const wm = ctx.imgW ? `<img class="ms9-wm" src="${ctx.imgW}" style="width:${w.size}mm;height:${w.size}mm;margin-left:${-w.size / 2 + w.x}mm;margin-top:${-w.size / 2 + w.y}mm;opacity:${w.opacity / 100};">` : '';
+    const logoL = ctx.imgL ? `<img class="ms9-logo" src="${ctx.imgL}" style="${lg(c.logoL, 'L')}">` : '';
+    const logoR = ctx.imgR ? `<img class="ms9-logo" src="${ctx.imgR}" style="${lg(c.logoR, 'R')}">` : '';
+    const nm = (v, big, mid) => { const l = String(v || '').length; return `font-size:${l > 36 ? mid - 1.5 : l > 29 ? mid : big}pt;`; };
+    const stRow = (hi, en, val) => `<div class="ms9-stu-r"><div class="lab"><span class="hi">${hi}</span> ${en}</div><div class="val" style="${nm(val, 10, 8.5)}">${e(val)}</div></div>`;
+    const bodyRows = r.rows.map(x => `<tr>
+        <td class="sub">${e(x.disp)}</td><td>${x.minTh}</td><td>${x.minPr}</td><td>${x.maxTh}</td><td>${x.maxPr}</td>
+        <td>${e(x.aTh)}</td><td>${e(x.aPr)}</td><td>${ms9Fmt2(x.q)}</td><td>${ms9Fmt2(x.h)}</td>
+        <td>${ms9Fmt(x.fTh)}</td><td>${ms9Fmt2(x.fPr)}</td><td>${ms9Fmt(x.grand)}</td>
+        <td class="rm ${x.remark === 'FAIL' ? 'fail' : 'pass'}">${x.remark}</td></tr>`).join('');
+    const totalRow = `<tr><td class="sub tot">TOTAL</td><td class="tot">${T.minTh}</td><td class="tot">${T.minPr}</td><td class="tot">${T.maxTh}</td><td class="tot">${T.maxPr}</td>
+        <td class="tot">${has ? ms9Fmt(T.aTh) : ''}</td><td class="tot">${has ? ms9Fmt(T.aPr) : ''}</td><td class="tot">${(has || r.hasQ) ? ms9Fmt2(T.q) : ''}</td><td class="tot">${(has || r.hasH) ? ms9Fmt2(T.h) : ''}</td>
+        <td class="tot">${has ? ms9Fmt(T.fTh) : ''}</td><td class="tot">${has ? ms9Fmt2(T.fPr) : ''}</td><td class="tot">${has ? ms9Fmt(T.grand) : ''}</td><td></td></tr>`;
+    const pct = has ? r.perc.toFixed(2) + ' %' : '';
+    const divn = has ? (r.pass ? ms9Div(r.perc) : '-') : '';
+    const grd = has ? ms9Grade(r.perc) : '';
+    const resColor = r.result === 'FAIL' ? 'color:#C00000;' : 'color:#1a7f37;';
+    const photo = st['PHOTO'] ? `<img src="${st['PHOTO']}">` : 'PHOTO';
+
+    return `<div class="ms9-sheet"><div class="ms9-frame">${wm}<div class="ms9-inner">
+      <div class="ms9-head">${logoL}${logoR}
+        <div class="ms9-school" style="font-size:${c.sizes.school}pt">${e(c.schoolName)}</div>
+        <div class="ms9-block" style="font-size:${c.sizes.block}pt">${e(c.blockLine)}</div>
+        <div class="ms9-runby" style="font-size:${c.sizes.runby}pt">${e(c.runBy)}</div>
+        <div class="ms9-meta">
+          <div class="ms9-class">CLASS - ${e(ctx.cls)}</div>
+          <div class="ms9-mid"><div class="t1 hi">${e(c.titleHi)}</div><div class="t2">${e(c.titleEn)}</div>
+            <div class="t3">SESSION - ${e(ctx.yr)}</div><div class="t4 hi">${e(c.recogLine)}</div></div>
+          <div class="ms9-dise">DISE CODE - ${e(c.diseCode)}</div>
+        </div>
+      </div>
+
+      <table class="ms9-info"><thead><tr>
+        <th><span class="hi">अनुक्रमांक</span><span class="en">ROLL NO.</span></th>
+        <th><span class="hi">नामांकन क्रमांक</span><span class="en">ENROLMENT NO.</span></th>
+        <th><span class="hi">समग्र आईडी</span><span class="en">SSSMID</span></th>
+        <th><span class="hi">प्रवेश क्रमांक</span><span class="en">SCHOLAR NO.</span></th>
+        <th><span class="hi">संस्था क्रमांक</span><span class="en">SCHOOL CODE</span></th>
+        <th><span class="hi">माध्यम</span><span class="en">MEDIUM</span></th></tr></thead>
+        <tbody><tr><td>${e(st['ROLL NO.'])}</td><td>${e(st['ENROLLMENT NO'])}</td><td>${e(st['SSSM ID'])}</td>
+        <td>${e(st['AD NO.'])}</td><td>${e(c.schoolCode)}</td><td>${e(c.medium)}</td></tr></tbody></table>
+
+      <div class="ms9-stu"><div>
+        ${stRow('श्री/श्रीमती/कुमारी', 'SHRI/SMT/KUMARI -', st['NAME OF STUDENT'])}
+        ${stRow('पिता का नाम श्री', "FATHER'S NAME SHRI-", st['NAME OF FATHER'])}
+        ${stRow('माता का नाम श्रीमती', 'MOTHER\'S NAME SMT -', st['NAME OF MOTHER'])}
+        ${stRow('जन्मतिथि', 'DATE OF BIRTH -', st['BIRTH DATE'])}
+      </div><div class="ms9-photo">${photo}</div></div>
+
+      <table class="ms9-marks">
+        <colgroup><col style="width:44mm"><col style="width:8.5mm"><col style="width:8.5mm"><col style="width:8.5mm"><col style="width:8.5mm">
+          <col style="width:11mm"><col style="width:11mm"><col style="width:19mm"><col style="width:19mm">
+          <col style="width:10mm"><col style="width:14mm"><col style="width:14mm"><col style="width:16.8mm"></colgroup>
+        <thead>
+          <tr><th rowspan="4"><span class="hi">विषय</span><span class="en">SUBJECT</span></th>
+            <th colspan="2"><span class="hi">न्यूनतम अंक</span><span class="en">MINIMUM MARKS</span></th>
+            <th colspan="2"><span class="hi">अधिकतम अंक</span><span class="en">MAXIMUM MARKS</span></th>
+            <th colspan="4"><span class="hi">प्राप्तांक</span><span class="en">OBTAINED MARKS</span></th>
+            <th colspan="3"><span class="hi">अंतिम परिणाम</span><span class="en">FINAL RESULT</span></th>
+            <th rowspan="4"><span class="hi">विशेष</span><span class="en">REMARKS</span></th></tr>
+          <tr><th rowspan="3"><span class="en">TH</span></th><th rowspan="3"><span class="en">PR</span></th>
+            <th rowspan="3"><span class="en">TH</span></th><th rowspan="3"><span class="en">PR</span></th>
+            <th colspan="2"><span class="hi">वार्षिक परीक्षा</span><span class="en">ANNUAL EXAM</span></th>
+            <th colspan="2"><span class="hi">अधिभार</span><span class="en">WEIGHTAGE</span></th>
+            <th rowspan="3"><span class="en">TH</span></th><th rowspan="2"><span class="en">PR</span></th>
+            <th rowspan="3"><span class="hi">कुल अंक</span><span class="en">GRAND TOTAL</span></th></tr>
+          <tr><th rowspan="2"><span class="en">TH</span></th><th><span class="en">PR</span></th>
+            <th><span class="hi">त्रैमासिक परीक्षा</span><span class="en">${c.marks.wQ}% OF QUARTERLY EXAM</span></th>
+            <th><span class="hi">अर्द्धवार्षिक परीक्षा</span><span class="en">${c.marks.wH}% OF HALF YEARLY EXAM</span></th></tr>
+          <tr><th><span class="en">(i)</span></th><th><span class="en">(ii)</span></th><th><span class="en">(iii)</span></th><th><span class="en">(i+ii+iii)</span></th></tr>
+        </thead>
+        <tbody>${bodyRows}${totalRow}</tbody>
+      </table>
+
+      <table class="ms9-res">
+        <colgroup><col style="width:26mm"><col style="width:24mm"><col style="width:20mm"><col style="width:22mm"><col style="width:22mm"><col style="width:20mm"><col style="width:14mm"><col style="width:44.8mm"></colgroup>
+        <thead><tr>
+          <th><span class="hi">प्रवेशित तिथि</span><span class="en">PUBLISH DATE</span></th>
+          <th><span class="hi">परीक्षा परिणाम</span><span class="en">EXAM RESULT</span></th>
+          <th><span class="hi">पूर्णांक</span><span class="en">MAX. MARKS</span></th>
+          <th><span class="hi">कुल प्राप्तांक</span><span class="en">TOTAL MARKS</span></th>
+          <th><span class="hi">प्रतिशत</span><span class="en">PARCENTAGE</span></th>
+          <th><span class="hi">श्रेणी</span><span class="en">DIVISION</span></th>
+          <th><span class="hi">ग्रेड</span><span class="en">GRADE</span></th>
+          <th><span class="hi">पर्यावरण शिक्षा एवं आपदा प्रबंधन</span><span class="en">ENVIRONMENTAL EDUCATION &amp; DISASTER MANAGEMENT GRADE</span></th></tr></thead>
+        <tbody><tr><td>${e(ctx.publish)}</td><td style="${resColor}">${r.result}</td><td>${has ? r.maxAll : ''}</td><td>${has ? ms9Fmt(T.grand) : ''}</td>
+          <td>${pct}</td><td>${divn}</td><td>${grd}</td><td>${e(ctx.env)}</td></tr></tbody>
+      </table>
+
+      <div class="ms9-sign"><div>SIGNATURE OF CLASS TEACHER</div><div>SIGNATURE OF EXAM INCHARGE</div><div>SEAL AND SIGNATURE OF PRINCIPAL</div></div>
+
+      <table class="ms9-div">
+        <colgroup><col style="width:36mm"><col style="width:30mm"><col style="width:30mm"><col style="width:30mm"><col style="width:33.4mm"><col style="width:33.4mm"></colgroup>
+        <thead><tr><th><span class="hi">DIVISION (श्रेणी)</span></th>
+          <th colspan="3"><span class="hi">प्रथम श्रेणी</span> (FIRST DIVISION:&gt;60%)</th>
+          <th><span class="hi">द्वितीय श्रेणी</span> (SECOND DIVISION:&gt;45%)</th>
+          <th><span class="hi">तृतीया श्रेणी</span> (THIRD DIVISION:&gt;33%)</th></tr></thead>
+        <tbody>
+          <tr><td class="lab hi">प्राप्तांक प्रतिशत</td><td>85% TO 100%</td><td>75% TO 84.9%</td><td>60% TO 74.9%</td><td>45% TO 59.9%</td><td>33% TO 44.9%</td></tr>
+          <tr><td class="lab">GRADE (<span class="hi">ग्रेड</span>)</td><td>A+</td><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+        </tbody>
+      </table>
+    </div></div></div>`;
+}
+
+/* ---------- image helpers ---------- */
+function ms9ReadImg(file, maxPx, cb) {
+    const fr = new FileReader();
+    fr.onload = ev => {
+        const im = new Image();
+        im.onload = () => {
+            const sc = Math.min(1, maxPx / Math.max(im.width, im.height));
+            const cv = document.createElement('canvas');
+            cv.width = Math.max(1, Math.round(im.width * sc)); cv.height = Math.max(1, Math.round(im.height * sc));
+            cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+            const keepAlpha = /png|gif|webp|svg/.test(file.type);
+            cb(cv.toDataURL(keepAlpha ? 'image/png' : 'image/jpeg', 0.92));
+        };
+        im.onerror = () => alert('Image padh nahi payi, dusri file try karein.');
+        im.src = ev.target.result;
+    };
+    fr.readAsDataURL(file);
+}
+
+/* ============================================================
+   1. FORMAT SCREEN
+   ============================================================ */
+function ms9Slider(path, label, min, max, step, unit, btns) {
+    const id = path.replace(/\./g, '-'), v = ms9GetPath(ms9Draft, path);
+    const b = btns || ['−', '+'];
+    return `<div class="ms9-srow"><label>${label}</label>
+        <button type="button" class="ms9-nb" onclick="ms9Nudge('${path}',-${step},${min},${max})">${b[0]}</button>
+        <input type="range" id="ms9s-${id}" min="${min}" max="${max}" step="${step}" value="${v}" oninput="ms9Set('${path}',this.value)">
+        <button type="button" class="ms9-nb" onclick="ms9Nudge('${path}',${step},${min},${max})">${b[1]}</button>
+        <input type="number" id="ms9n-${id}" step="${step}" value="${v}" oninput="ms9Set('${path}',this.value)"><span>${unit}</span></div>`;
+}
+function ms9ImgBlock(key, title, path, isWm) {
+    return `<div class="ms9-fbox"><h4>${title}</h4>
+        <div class="ms9-frow">
+          <input type="file" accept="image/*" onchange="ms9Upload('${key}',this)">
+          <button type="button" class="btn btn-secondary" onclick="ms9UsePortal('${key}')">Portal ka ${isWm ? 'watermark' : 'logo'} lo</button>
+          <button type="button" class="btn btn-secondary" onclick="ms9RemoveImg('${key}')">Hatao</button>
+          <img id="ms9-thumb-${key}" class="ms9-thumb" style="display:none">
+        </div>
+        ${ms9Slider(path + '.size', 'Size', isWm ? 40 : 8, isWm ? 190 : 45, isWm ? 1 : 0.5, 'mm', ['−', '+'])}
+        ${ms9Slider(path + '.x', 'आगे-पीछे (X)', -60, 60, 0.5, 'mm', ['◀', '▶'])}
+        ${ms9Slider(path + '.y', 'ऊपर-नीचे (Y)', -60, 60, 0.5, 'mm', ['▲', '▼'])}
+        ${isWm ? ms9Slider(path + '.opacity', 'हल्का/गहरा', 3, 40, 1, '%', ['−', '+']) : ''}
+    </div>`;
+}
+function ms9Txt(label, path, big) {
+    const v = ms9GetPath(ms9Draft, path);
+    return `<label>${label}</label><input type="text" data-p="${path}" value="${ms9Esc(v)}" oninput="ms9OnTxt(this)">`;
+}
+function ms9InitFormat() {
+    ms9Draft = ms9LoadCfg(); ms9DraftImgs = ms9SavedImgs();
+    const root = document.getElementById('ms9-format-root');
+    root.innerHTML = `
+    <div class="ms9-frow no-print" style="margin-bottom:12px;">
+        <button class="btn btn-success" onclick="ms9Save()"><i class="fa-solid fa-floppy-disk"></i> Format Save Karein</button>
+        <button class="btn btn-secondary" onclick="ms9ResetDefault()"><i class="fa-solid fa-rotate-left"></i> Default Par Wapas</button>
+        <span style="font-size:.8rem;color:#64748b;">Dayi taraf Live Preview hai. Badlav Save karne par hi Create Marksheet me lagu honge.</span>
+    </div>
+    <div class="ms9-fgrid">
+      <div>
+        <div class="ms9-fbox"><h4>1. Header (Marksheet ke upar ka likha hua)</h4>
+            ${ms9Txt('School Name', 'schoolName')}
+            ${ms9Txt('Block / District', 'blockLine')}
+            ${ms9Txt('Run By (Samiti)', 'runBy')}
+            <div class="ms9-g2"><div>${ms9Txt('Hindi Title', 'titleHi')}</div><div>${ms9Txt('English Title', 'titleEn')}</div></div>
+            ${ms9Txt('Manyata Line (Hindi)', 'recogLine')}
+            <div class="ms9-g2"><div>${ms9Txt('DISE Code', 'diseCode')}</div><div>${ms9Txt('School Code (संस्था क्रमांक)', 'schoolCode')}</div></div>
+            ${ms9Txt('Medium (माध्यम)', 'medium')}
+            ${ms9Slider('sizes.school', 'School Name', 12, 28, 0.5, 'pt', ['−', '+'])}
+            ${ms9Slider('sizes.block', 'Block Line', 8, 18, 0.5, 'pt', ['−', '+'])}
+            ${ms9Slider('sizes.runby', 'Run By Line', 7, 16, 0.5, 'pt', ['−', '+'])}
+        </div>
+        ${ms9ImgBlock('L', '2. Left Logo (बायाँ लोगो)', 'logoL', false)}
+        ${ms9ImgBlock('R', '3. Right Logo (दायाँ लोगो)', 'logoR', false)}
+        <div class="ms9-frow" style="margin:-4px 0 12px;"><button type="button" class="btn btn-secondary" onclick="ms9CopyLeftToRight()">Left logo ko Right me bhi lagao</button></div>
+        ${ms9ImgBlock('W', '4. Watermark (बीच का हल्का निशान)', 'wm', true)}
+        <div class="ms9-fbox"><h4>5. Marks Setting (Class 9 scheme)</h4>
+            <div class="ms9-g2">
+              <div><label>Theory Max</label><input type="number" data-p="marks.thMax" value="${ms9Draft.marks.thMax}" oninput="ms9OnTxt(this,true)"></div>
+              <div><label>Theory Min</label><input type="number" data-p="marks.thMin" value="${ms9Draft.marks.thMin}" oninput="ms9OnTxt(this,true)"></div>
+              <div><label>Practical Max (i+ii+iii)</label><input type="number" data-p="marks.prMax" value="${ms9Draft.marks.prMax}" oninput="ms9OnTxt(this,true)"></div>
+              <div><label>Practical Min</label><input type="number" data-p="marks.prMin" value="${ms9Draft.marks.prMin}" oninput="ms9OnTxt(this,true)"></div>
+              <div><label>Quarterly weightage (marks)</label><input type="number" data-p="marks.wQ" value="${ms9Draft.marks.wQ}" oninput="ms9OnTxt(this,true)"></div>
+              <div><label>Half Yearly weightage (marks)</label><input type="number" data-p="marks.wH" value="${ms9Draft.marks.wH}" oninput="ms9OnTxt(this,true)"></div>
+            </div>
+            <label>Subject Code (har line me NAAM=CODE)</label>
+            <textarea rows="6" data-p="codes" oninput="ms9OnTxt(this)">${ms9Esc(ms9Draft.codes)}</textarea>
+        </div>
+      </div>
+      <div class="ms9-sticky">
+        <div class="ms9-fbox"><h4>Live Preview</h4>
+          <div class="ms9-frow"><label style="margin:0">Zoom</label>
+            <select onchange="ms9Zoom=parseFloat(this.value);ms9RenderPreview()">
+              <option value="0.4">40%</option><option value="0.5">50%</option><option value="0.6" selected>60%</option><option value="0.75">75%</option></select></div>
+          <div style="overflow:auto;max-height:80vh;"><div id="ms9-preview"></div></div>
+        </div>
+      </div>
+    </div>`;
+    ms9RefreshThumbs();
+    ms9RenderPreview();
+}
+function ms9OnTxt(el, num) {
+    let v = el.value; if (num) v = parseFloat(v) || 0;
+    ms9SetPath(ms9Draft, el.getAttribute('data-p'), v);
+    ms9SchedulePreview();
+}
+function ms9Set(path, val) {
+    let v = parseFloat(val); if (isNaN(v)) return;
+    ms9SetPath(ms9Draft, path, v);
+    const id = path.replace(/\./g, '-');
+    const r = document.getElementById('ms9s-' + id), n = document.getElementById('ms9n-' + id);
+    if (r && r.value !== String(v)) r.value = v;
+    if (n && n.value !== String(v)) n.value = v;
+    ms9SchedulePreview();
+}
+function ms9Nudge(path, d, min, max) {
+    let v = (parseFloat(ms9GetPath(ms9Draft, path)) || 0) + d;
+    v = Math.max(min, Math.min(max, Math.round(v * 100) / 100));
+    const id = path.replace(/\./g, '-');
+    const n = document.getElementById('ms9n-' + id); if (n) n.value = v;
+    const r = document.getElementById('ms9s-' + id); if (r) r.value = v;
+    ms9SetPath(ms9Draft, path, v);
+    ms9SchedulePreview();
+}
+function ms9SchedulePreview() {
+    if (ms9RafPending) return; ms9RafPending = true;
+    requestAnimationFrame(() => { ms9RafPending = false; ms9RenderPreview(); });
+}
+function ms9RefreshThumbs() {
+    ['L', 'R', 'W'].forEach(k => {
+        const t = document.getElementById('ms9-thumb-' + k); if (!t) return;
+        if (ms9DraftImgs[k]) { t.src = ms9DraftImgs[k]; t.style.display = 'inline-block'; } else t.style.display = 'none';
+    });
+}
+function ms9Upload(key, input) {
+    const f = input.files && input.files[0]; if (!f) return;
+    ms9ReadImg(f, key === 'W' ? 900 : 500, d => { ms9DraftImgs[key] = d; ms9RefreshThumbs(); ms9RenderPreview(); });
+}
+function ms9UsePortal(key) {
+    const src = key === 'W' ? (typeof watermarkDataURL !== 'undefined' ? watermarkDataURL : '') : (typeof logoDataURL !== 'undefined' ? logoDataURL : '');
+    if (!src) { alert('Portal me pehle se koi ' + (key === 'W' ? 'watermark' : 'logo') + ' upload nahi hai.'); return; }
+    ms9DraftImgs[key] = src; ms9RefreshThumbs(); ms9RenderPreview();
+}
+function ms9RemoveImg(key) { ms9DraftImgs[key] = ''; ms9RefreshThumbs(); ms9RenderPreview(); }
+function ms9CopyLeftToRight() {
+    if (!ms9DraftImgs.L) { alert('Pehle Left logo upload karein.'); return; }
+    ms9DraftImgs.R = ms9DraftImgs.L; ms9RefreshThumbs(); ms9RenderPreview();
+}
+function ms9Save() {
+    cloudStore.setItem(MS9_KEYS.cfg, JSON.stringify(ms9Draft));
+    ['L', 'R', 'W'].forEach(k => {
+        if (ms9DraftImgs[k]) cloudStore.setItem(MS9_KEYS[k], ms9DraftImgs[k]); else cloudStore.removeItem(MS9_KEYS[k]);
+    });
+    if (typeof logActivity === 'function') logActivity('कक्षा 9 मार्कशीट फॉर्मेट सेव किया', 'Header/Logo/Watermark');
+    alert('कक्षा- नवमी मार्कशीट फॉर्मेट सेव हो गया!');
+}
+function ms9ResetDefault() {
+    if (!confirm('Saare format settings default par wapas karne hain? (Logo/Watermark bhi hat jayenge, Save karne tak final nahi hoga)')) return;
+    cloudStore.removeItem(MS9_KEYS.cfg);
+    ms9Draft = ms9Clone(MS9_DEFAULT); ms9DraftImgs = { L: '', R: '', W: '' };
+    ms9InitFormat();
+}
+function ms9SampleStudent() {
+    let st = (typeof students !== 'undefined' ? students : []).find(s => cleanString(s['CLASS']) === '9TH');
+    return st || { 'ROLL NO.': '9001', 'ENROLLMENT NO': 'A25/712384/019', 'SSSM ID': '131615511', 'AD NO.': '629',
+        'NAME OF STUDENT': 'ADITI HALDKAR', 'NAME OF FATHER': 'ANIL KUMAR HALDKAR', 'NAME OF MOTHER': 'INDRAVATI HALDKAR', 'BIRTH DATE': '27/10/2010', 'CLASS': '9TH', 'YEAR': '2026-27' };
+}
+function ms9RenderPreview() {
+    const box = document.getElementById('ms9-preview'); if (!box || !ms9Draft) return;
+    const st = ms9SampleStudent();
+    const yr = st['YEAR'] || '2026-27', cls = '9TH';
+    const ctx = { cfg: ms9Draft, cls, yr, exam: 'ANNUAL', subs: ms9Subjects(cls, yr, ms9Draft), publish: '', env: '',
+                  imgL: ms9DraftImgs.L, imgR: ms9DraftImgs.R, imgW: ms9DraftImgs.W };
+    box.style.zoom = ms9Zoom;
+    box.innerHTML = `<div class="ms9-page-wrap">${ms9Sheet(st, ctx)}</div>`;
+}
+
+/* ============================================================
+   2. CREATE SCREEN
+   ============================================================ */
+function ms9InitCreate() {
+    const cs = document.getElementById('ms9-class');
+    if (cs && !cs.options.length) {
+        cs.innerHTML = CLASS_SEQUENCE.map(c => `<option value="${c}"${c === '9TH' ? ' selected' : ''}>${c}</option>`).join('');
+    }
+    const pd = document.getElementById('ms9-pubdate');
+    if (pd && !pd.value) pd.value = new Date().toLocaleDateString('en-GB');
+    document.getElementById('ms9-show-panel').style.display = 'none';
+    document.getElementById('ms9-output').innerHTML = '';
+    ms9PagesHtml = '';
+}
+function ms9ClassStudents() {
+    const yr = document.getElementById('ms9-year').value, cls = document.getElementById('ms9-class').value;
+    return students.filter(s => cleanString(s['CLASS']) === cleanString(cls) && cleanString(s['YEAR']) === cleanString(yr))
+        .filter(s => !isNaN(parseInt(s['ROLL NO.'], 10)))
+        .sort((a, b) => parseInt(a['ROLL NO.'], 10) - parseInt(b['ROLL NO.'], 10));
+}
+function ms9Show() {
+    const list = ms9ClassStudents();
+    const yr = document.getElementById('ms9-year').value, cls = document.getElementById('ms9-class').value;
+    const info = document.getElementById('ms9-show-info'), panel = document.getElementById('ms9-show-panel');
+    document.getElementById('ms9-output').innerHTML = ''; ms9PagesHtml = '';
+    if (!list.length) {
+        panel.style.display = 'none';
+        info.innerHTML = '';
+        document.getElementById('ms9-output').innerHTML = `<p style="color:#dc2626;padding:15px;font-weight:600;">सत्र ${ms9Esc(yr)} / कक्षा ${ms9Esc(cls)} में कोई छात्र (Roll No सहित) नहीं मिला।</p>`;
+        return;
+    }
+    const rolls = list.map(s => parseInt(s['ROLL NO.'], 10));
+    document.getElementById('ms9-from').value = rolls[0];
+    document.getElementById('ms9-to').value = rolls[rolls.length - 1];
+    info.innerHTML = `<b>कुल छात्र: ${list.length}</b> &nbsp;|&nbsp; Roll No ${rolls[0]} से ${rolls[rolls.length - 1]} तक<br>` +
+        list.map(s => `<span class="ms9-chip">${ms9Esc(s['ROLL NO.'])}</span>`).join('');
+    panel.style.display = 'block';
+}
+function ms9Generate() {
+    const from = parseInt(document.getElementById('ms9-from').value, 10), to = parseInt(document.getElementById('ms9-to').value, 10);
+    const out = document.getElementById('ms9-output');
+    if (isNaN(from) || isNaN(to) || from > to) { out.innerHTML = '<p style="color:#dc2626;padding:15px;">कृपया सही Roll No From / To भरें।</p>'; return; }
+    const yr = document.getElementById('ms9-year').value, cls = document.getElementById('ms9-class').value, exam = document.getElementById('ms9-exam').value;
+    const list = ms9ClassStudents().filter(s => { const r = parseInt(s['ROLL NO.'], 10); return r >= from && r <= to; });
+    if (!list.length) { out.innerHTML = '<p style="color:#dc2626;padding:15px;">इस Roll No range में कोई छात्र नहीं मिला।</p>'; return; }
+    const cfg = ms9LoadCfg(), imgs = ms9SavedImgs();
+    const ctx = { cfg, cls, yr, exam, subs: ms9Subjects(cls, yr, cfg),
+                  publish: document.getElementById('ms9-pubdate').value.trim(), env: document.getElementById('ms9-env').value.trim(),
+                  imgL: imgs.L, imgR: imgs.R, imgW: imgs.W };
+    ms9PagesHtml = list.map(st => ms9Sheet(st, ctx)).join('');
+    out.innerHTML = `<p style="margin-bottom:8px;font-weight:700;color:#334155;">${list.length} marksheet taiyar (Roll ${ms9Esc(list[0]['ROLL NO.'])} se ${ms9Esc(list[list.length - 1]['ROLL NO.'])}). Print dabane par sabhi ek saath print hongi.</p>` +
+        `<div class="ms9-pages"><div style="zoom:.7">${list.map(st => `<div class="ms9-page-wrap">${ms9Sheet(st, ctx)}</div>`).join('')}</div></div>`;
+    if (typeof logActivity === 'function') logActivity('कक्षा 9 मार्कशीट जनरेट', `${cls} ${yr} Roll ${from}-${to}`);
+}
+function ms9Print() {
+    if (!ms9PagesHtml) { alert('Pehle "Generate Marksheet" par click karein.'); return; }
+    const css = (document.getElementById('ms9-style') || {}).textContent || '';
+    const old = document.getElementById('ms9-print-frame'); if (old) old.remove();
+    const frame = document.createElement('iframe');
+    frame.id = 'ms9-print-frame'; frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(frame);
+    const doc = frame.contentDocument;
+    const printCss = `
+        @page{size:A4 portrait;margin:0;}
+        html,body{margin:0!important;padding:0!important;background:#fff!important;}
+        *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+        .ms9-sheet{page-break-after:always;break-after:page;page-break-inside:avoid;margin:0;}
+        .ms9-sheet:last-child{page-break-after:auto;break-after:auto;}`;
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Class 9 Marksheet</title><style>' + css + printCss + '</style></head><body>' + ms9PagesHtml + '</body></html>');
+    doc.close();
+    const go = () => { try { frame.contentWindow.focus(); frame.contentWindow.print(); } finally { setTimeout(() => frame.remove(), 2000); } };
+    frame.onload = () => {
+        const imgs = Array.from(frame.contentDocument.images || []);
+        if (!imgs.length) { setTimeout(go, 200); return; }
+        let left = imgs.length, done = false;
+        const fin = () => { if (done) return; left--; if (left <= 0) { done = true; setTimeout(go, 200); } };
+        imgs.forEach(i => { if (i.complete) fin(); else { i.onload = fin; i.onerror = fin; } });
+        setTimeout(() => { if (!done) { done = true; go(); } }, 2500);
+    };
+}
 
 </script>
 <script>
